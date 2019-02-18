@@ -1,0 +1,1 @@
+echo "Hello world from the github script!" > C:\Users\$env:UserName\Desktop\hello.txt
