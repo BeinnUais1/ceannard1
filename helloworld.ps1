@@ -28,4 +28,10 @@ ElseIf($mods.Name -clike 'PowerShellForGitHub')
 	echo "PSFG installed Ok."
 }
 
+Set-GitHubConfiguration -DisableTelemetry -SessionOnly
+$secure = ConvertTo-SecureString "b93fe4ce3dc7709283ac470ac1d41392e6b50142" -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential "USERNAME_IS_IGNORED", $secure
+Set-GitHubAuthentication -Credential $cred
+Get-GitHubUser -Current
+
 echo $mods.Name > C:\Users\$env:UserName\Desktop\hello.txt
