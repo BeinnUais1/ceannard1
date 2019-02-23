@@ -105,5 +105,9 @@ If($issueNum -clike "0")
 	}
 }
 
-echo ("Reached the end with " + $issueNum + " issue number.")
+echo ("Reached the end with " + $issueNum + " issue number. Attempting to post comment...")
+
+New-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -Issue $issueNum -Body "API POST GOOD"
+
+echo ("Apparently posted.")
 Start-Sleep -s 1000
