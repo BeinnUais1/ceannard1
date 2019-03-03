@@ -5,7 +5,7 @@ function Send-PackageMessage
     (
         [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("pack","package","packname")][String] $packageName,
         [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("issueNum","issue","issNum","iss")][int] $issueNumber,
-        [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("message","text")][int] $body
+        [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("message","text")][String] $body
     )
     
     try
@@ -254,7 +254,7 @@ try
 	}
 	Else
 	{
-		Send-PackageMessage -Package "EXCEPTION" -IssueNumber $issueNumber ("Attempted to upload the console log, but was unable to find the file. Exiting.")
+		Send-PackageMessage -Package "EXCEPTION" -IssueNumber $issueNumber -Body ("Attempted to upload the console log, but was unable to find the file. Exiting.")
 		Write-Console -Body "Attempted to upload the console log, but was unable to find the file. Exiting." -IssueNumber $issueNumber
 		Write-Host "DEBUG: Attempted to upload the console log, but was unable to find the file. Exiting."; Start-Sleep -s 600
 		Exit
