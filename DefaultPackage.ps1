@@ -11,7 +11,7 @@ function Send-PackageMessage
 	#If we're uploading a file, it's already base64 encoded. Use this logic to avoid re-encoding it.
     try
     {
-		If($packageName -like "FILE")
+		If($packageName -like "FILE_*")
 		{
 			$mergedBody = "PKG{" + $packageName + "}:" + $body
 			New-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -Issue $issueNumber -Body $mergedBody
