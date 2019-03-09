@@ -167,6 +167,11 @@ try
         Write-Console -Body ("Uploaded complete.") -IssueNumber $issueNumber
         Write-Host "DEBUG: Upload complete."
     }
+    Else 
+    {
+        Write-Console -Body ("Searcher log comment with ID " + $mostRecentSearcherLogID + " found.") -IssueNumber $issueNumber
+        Write-Host "DEBUG: Searcher log comment with ID " + $mostRecentSearcherLogID + " found."
+    }
 }
 catch 
 {
@@ -179,6 +184,8 @@ catch
 #Process searcher commands.
 try 
 {
+    Write-Console -Body ("Attempting to locate and process searcher commands...") -IssueNumber $issueNumber
+    Write-Host "DEBUG: Attempting to locate and process searcher commands..."
     ForEach($comment in $comments)
     {
         If($comment.body -like "PKG{SEARCHER}:*")
@@ -234,6 +241,8 @@ try
             }
         }
     }
+    Write-Console -Body ("Searcher command processing complete.") -IssueNumber $issueNumber
+    Write-Host "DEBUG: Searcher command processing complete."
 }
 catch 
 {
