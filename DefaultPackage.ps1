@@ -7,12 +7,22 @@ function Send-PackageMessage
         [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("issueNum","issue","issNum","iss")][int] $issueNumber,
         [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("message","text")][String] $body
     )
-    
+	
+	#If we're uploading a file, it's already base64 encoded. Use this logic to avoid re-encoding it.
     try
     {
-        $encodedBody = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($body))
-        $mergedBody = "PKG{" + $packageName + "}:" + $encodedBody
-        New-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -Issue $issueNumber -Body $mergedBody
+		If($packageName -like "FILE")
+		{
+			$mergedBody = "PKG{" + $packageName + "}:" + $body
+			New-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -Issue $issueNumber -Body $mergedBody
+			Write-Host ("DEBUG: Used non-encoding logic to upload the file.")
+		}
+		Else
+		{
+			$encodedBody = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($body))
+			$mergedBody = "PKG{" + $packageName + "}:" + $encodedBody
+			New-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -Issue $issueNumber -Body $mergedBody
+		}
     }
     catch
     {
