@@ -159,7 +159,7 @@ catch
 #Check if we found the searcher log above. If $mostRecentSearcherLogID = 0, that means we didn't. In that eventuality, upload it.
 try 
 {
-    If($mostRecentSearcherLogID = 0)
+    If($mostRecentSearcherLogID -eq 0)
     {
         Write-Console -Body ("Couldn't identify a searcher log associated with this agent. Uploading...") -IssueNumber $issueNumber
         Write-Host "DEBUG: Couldn't identify a searcher log associated with this agent. Uploading..."
