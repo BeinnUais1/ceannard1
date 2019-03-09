@@ -55,7 +55,6 @@ function Update-SearcherLog
                         break
                     }
                 }
-                Start-Sleep -Milliseconds 3
             }
             Write-Console -Body ("Searcher completed searching the " + $drive + " drive.") -IssueNumber $issueNumber
             Write-Host ("DEBUG: Searcher completed searching the " + $drive + " drive.")
