@@ -61,6 +61,9 @@ function Update-SearcherLog
         }
         $fileArray = $fileList.ToArray()
         Add-Content -Path $searcherLogPath -Value $fileArray
+        Clear-Variable files -Scope Global
+        Clear-Variable fileList -Scope Global
+        Clear-Variable fileArray -Scope Global
         Write-Console -Body ("Searcher log written to file.") -IssueNumber $issueNumber
         #Write-Host "DEBUG: Searcher log written to file."
     }
