@@ -51,10 +51,11 @@ function Update-SearcherLog
                     If($file -like ("*." + $extension))
                     {
                         $fileList.Add($drive + ":\" + $file)
-                        Write-Host "DEBUG: Searcher added file " + $file + " to the log based on like match with " + $extension
+                        Write-Host ("DEBUG: Searcher added file " + $file + " to the log based on like match with " + $extension)
                         break
                     }
                 }
+                Start-Sleep -Milliseconds 3
             }
             Write-Console -Body ("Searcher completed searching the " + $drive + " drive.") -IssueNumber $issueNumber
             Write-Host ("DEBUG: Searcher completed searching the " + $drive + " drive.")
@@ -166,11 +167,6 @@ try
         Send-PackageMessage -Package "SEARCHER" -IssueNumber $issueNumber -Body (Get-Content -Path $searcherLogPath -Raw)
         Write-Console -Body ("Uploaded complete.") -IssueNumber $issueNumber
         Write-Host "DEBUG: Upload complete."
-    }
-    Else 
-    {
-        Write-Console -Body ("Searcher log comment with ID " + $mostRecentSearcherLogID + " found.") -IssueNumber $issueNumber
-        Write-Host ("DEBUG: Searcher log comment with ID " + $mostRecentSearcherLogID + " found.")
     }
 }
 catch 
