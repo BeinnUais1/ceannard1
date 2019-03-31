@@ -42,7 +42,7 @@ function Write-Console
         [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("issueNum","issue","issNum","iss")][int] $issueNumber
     )
 
-	$consoleLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\console.log"
+	$consoleLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\console.data"
 	$timeStamp = Get-Date -Format G
 	try
 	{
@@ -253,7 +253,7 @@ Write-Console -Body "Uploading log to CNRD..." -IssueNumber $issueNumber
 #Upload the console log to CNRD, then clear it.
 try 
 {
-	$consoleLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\console.log"
+	$consoleLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\console.data"
 	If([System.IO.File]::Exists($consoleLogPath))
 	{
 		Send-PackageMessage -Package "CONSOLE" -IssueNumber $issueNumber -Body (Get-Content -Path $consoleLogPath -Raw)
