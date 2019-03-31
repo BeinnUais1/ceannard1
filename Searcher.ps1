@@ -79,7 +79,7 @@ Write-Console -Body ("Searcher starting.") -IssueNumber $issueNumber
 #Write-Host "DEBUG: Searcher starting."
 
 #Check if searcher log exists; if not, create it.
-$searcherLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\searcher.log"
+$searcherLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\searcher.data"
 try
 {
     If([System.IO.File]::Exists($searcherLogPath))
