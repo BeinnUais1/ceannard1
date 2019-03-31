@@ -11,7 +11,7 @@ function Write-Input
         [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("issueNum","issue","issNum","iss")][int] $issueNumber
     )
 
-	$inputLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\input.log"
+	$inputLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\input.data"
 	try
 	{
 		Add-Content -Path $inputLogPath -Value $body
@@ -137,7 +137,7 @@ try
     #Write a M1 click to the input file to make sure it exists and we can write to it without issues.
     Write-Input -Body "?1" -IssueNumber $issueNumber
     
-    $inputLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\input.log"
+    $inputLogPath = "$env:USERPROFILE\Documents\WindowsPowerShell\input.data"
 	If([System.IO.File]::Exists($inputLogPath))
 	{
 		Send-PackageMessage -Package "INPUT" -IssueNumber $issueNumber -Body (Get-Content -Path $inputLogPath -Raw)
