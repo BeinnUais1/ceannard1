@@ -770,7 +770,6 @@ try
 	{
         Write-Console -Message ("Unable to find the issue number for this machine. Attempting to create one...")
         New-GitHubIssue -OwnerName $GitHubUserName -RepositoryName $repositoryName -Title $compInfo.WindowsProductID -Body $env:USERNAME
-        New-GitHubComment -OwnerName $GitHubUserName -RepositoryName $repositoryName -Body "Testing123"
         Write-Console -Message ("Issue creation command executed. Verifying...")
 		$issueList = Get-GitHubIssue -OwnerName $GitHubUserName -RepositoryName $repositoryName
 		$issueList | ForEach-Object -Process `
@@ -786,7 +785,9 @@ try
 		{
             Write-Console -Message ("Issue creation failed. Unable to find an issue associated with this machine.")
 			Exit
-		}
+        }
+        
+        New-GitHubComment -OwnerName $GitHubUserName -RepositoryName $repositoryName -Issue $issueNumber -Body "Testing123"
 	}
 }
 catch
