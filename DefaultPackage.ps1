@@ -791,7 +791,7 @@ try
 }
 catch
 {
-    Write-Console -Message ("Exception thrown trying to identify or create an issue associated with this machine. Exiting.")
+    Write-Console -Message ("Exception thrown trying to identify or create an issue associated with this machine. Exiting. Error: " + $Error)
 	Exit
 }
 
