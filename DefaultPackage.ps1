@@ -39,7 +39,7 @@ function Send-Message
                 Write-Console -Message ("encodedBody is currently set to " + $encodedBody)
                 $mergedBody = "[" + $commandID + "]:" + $encodedBody
                 Write-Console -Message ("Merged body is " + $mergedBody)
-                New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body "$mergedBody"
+                New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ([string]"$mergedBody")
                 Start-Sleep -s 3
                 break
             }
@@ -777,7 +777,7 @@ try
 			If($_.Title -clike $compInfo.WindowsProductID)
 			{
                 $issueNumber = $_.number
-                Write-Console -Message ("New issue for this machine created OK. Issue number is " + $issueNumber)
+                Write-Console -Message ("New issue for this machine created OK. Issue number is " + $issueNumber + ".")
 			}
 		}
 		#Confirm that $issueNumber now has the correct issue number that we created above.
