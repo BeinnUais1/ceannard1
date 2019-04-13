@@ -472,7 +472,7 @@ function Start-LoopMode
         }
         
         #Calculate the total waiting interval using the "phoneStatic" variable
-        If(($phoneStatic + 5) -gt $phoneInterval)
+        If(($phoneStatic + 1) -gt $phoneInterval)
         {
             Write-Console -Message ("Phone static was too large relative to the phone interval. Setting defaults and continuing.")
             $phoneInterval = 60 #Minutes
@@ -486,6 +486,8 @@ function Start-LoopMode
             If($uploadConsole)
             {
                 Write-Console -Message ("Configuration is set to upload the console log. Uploading...")
+                Write-Host $consoleLog
+                Write-Host "Printed console log. Is it actually empty?"
                 Send-Message -CommandID 2 -Body ($consoleLog)
                 Write-Console -Message ("Console log upload complete.")
             }
