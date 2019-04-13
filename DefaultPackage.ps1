@@ -36,7 +36,7 @@ function Send-Message
             Write-Console -Message ("encodedBody is currently set to " + $encodedBody)
             $mergedBody = "[" + $commandID + "]:" + $encodedBody
             Write-Console -Message ("Merged body is " + $mergedBody)
-            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ([string]"$mergedBody")
+            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ([string]"Hello world! Testing 123")
         }           
     }
     catch
@@ -66,7 +66,10 @@ function Write-Console
             Write-Host ("DEBUG: " + $message)
         }
 
-        $consoleLog = $consoleLog + $timeStamp +  ": " + $message + "`n"
+        #$consoleLog = $consoleLog + $timeStamp +  ": " + $message + "`n"
+        Write-Host $timeStamp
+        Write-Host $message
+        $consoleLog = $consoleLog + $timeStamp +  ": " + $message
 	}
 	catch
 	{
