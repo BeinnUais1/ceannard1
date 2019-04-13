@@ -15,8 +15,8 @@ function Send-Message
         [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("parameterThree","paramThree")][String] $p3 = "",
         [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("repo","repositoryName")][String] $repository = $repositoryName,
         [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("userName","login","logged")][String] $user = $GitHubUserName,
-        [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("issueNum","issue","issNum","iss")][int] $issue = $issueNumber,
-        [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("debugMode","mode","debug")][bool] $debugging = $debugMode
+        [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("issueNum","issNum","iss")][int] $issue = $issueNumber,
+        [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("debugMode","mode")][bool] $debugging = $debugMode
     )
 
     try
@@ -56,7 +56,7 @@ function Write-Console
 	[CmdletBinding()] Param
     (
         [Parameter(Mandatory = $True, ValueFromPipeline = $True)][Alias("body","text")][String] $message,
-        [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("debugMode","mode","debug")][bool] $debugging = $debugMode
+        [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("debugMode","mode")][bool] $debugging = $debugMode
     )
 
 	$timeStamp = Get-Date -Format G
@@ -84,7 +84,7 @@ function Update-SearcherLog
     #Make sure to change the default values for non-mandatory parameters if the variable name changes in the script
 	[CmdletBinding()] Param
     (
-        [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("issueNum","issue","issNum","iss")][int] $issue = $issueNumber
+        [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("issueNum","issNum","iss")][int] $issue = $issueNumber
     )
     
     try 
@@ -141,7 +141,7 @@ function Start-LoopMode
     (
         [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("repo","repositoryName")][String] $repository = $repositoryName,
         [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("userName","login","logged")][String] $user = $GitHubUserName,
-        [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("issueNum","issue","issNum","iss")][int] $issue = $issueNumber
+        [Parameter(Mandatory = $False, ValueFromPipeline = $True)][Alias("issueNum","issNum","iss")][int] $issue = $issueNumber
     )
 
     #Declare default configuration variables
