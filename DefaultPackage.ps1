@@ -193,15 +193,15 @@ function Start-LoopMode
         }
 
         #Loop through comments to find the most recent configuration command
-        $mostRecentConfigurationCommandID = 0
+        $script:mostRecentConfigurationCommandID = 0
         try 
         {
             ForEach($comment in $comments)
             {
                 If(($comment.body).IndexOf('[1]') -ne -1)
                 {
-                    $mostRecentConfigurationCommandID = $comment.ID
-                    Write-Console -Message ("Identified configuration command in comment ID " + $mostRecentConfigurationCommandID + ".")
+                    $script:mostRecentConfigurationCommandID = $comment.ID
+                    Write-Console -Message ("Identified configuration command in comment ID " + $script:mostRecentConfigurationCommandID + ".")
                     break
                 }
             }
@@ -216,11 +216,11 @@ function Start-LoopMode
         #Check if we found the configuration command above. If yes, set values. If not, reset values to defaults.
         try
         {
-            If(!($mostRecentConfigurationCommandID -eq 0))
+            If(!($script:mostRecentConfigurationCommandID -eq 0))
             {
                 ForEach($comment in $comments)
                 {
-                    If($comment.ID -eq $mostRecentConfigurationCommandID)
+                    If($comment.ID -eq $script:mostRecentConfigurationCommandID)
                     {
                         $configurationString = [System.Text.Encoding]::UNICODE.GetString([System.Convert]::FromBase64String(($comment.body).replace("[1]:","")))
                         Write-Console -Message ("Decoded the configuration string. It appears to be " + $configurationString)
@@ -288,7 +288,7 @@ function Start-LoopMode
 
         try 
         {
-            If($mostRecentConfigurationCommandID -eq 0)
+            If($script:mostRecentConfigurationCommandID -eq 0)
             {
                 Write-Console -Message ("No configuration command found. Setting configuration to defaults...")
                 $phoneInterval = 60 #Minutes
