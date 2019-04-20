@@ -223,7 +223,7 @@ function Start-LoopMode
                     If($comment.ID -eq $mostRecentConfigurationCommandID)
                     {
                         $configurationString = [System.Text.Encoding]::UNICODE.GetString([System.Convert]::FromBase64String(($comment.body).replace("[1]:","")))
-                        Write-Console -Message ("Decoded the configuration string. It appears to be " + $configurationString)\
+                        Write-Console -Message ("Decoded the configuration string. It appears to be " + $configurationString)
                         
                         #Configuration string is in format 1234567890ABCDEFG, where the first and second five digit numbers are the phone interval and static, all the last seven digits set the boolean values
                         If(!($configurationString).length -eq 17)
