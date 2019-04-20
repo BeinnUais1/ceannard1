@@ -220,10 +220,10 @@ function Start-LoopMode
         {
             If(!($script:mostRecentConfigurationCommandID -eq 0))
             {
-                Write-Host ("The config comment ID is nonzero. It is " + $script:mostRecentConfigurationCommandID + ".")
+                Write-Host ("The config comment ID is nonzero. It is " + [int]$script:mostRecentConfigurationCommandID + ".")
                 ForEach($comment in $script:comments)
                 {
-                    Write-Host ("Comparing the config comment ID with " + $commend.ID + ".")
+                    Write-Host ("Comparing the config comment ID with " + [int]$comment.ID + ".")
                     If([int]$comment.ID -eq [int]$script:mostRecentConfigurationCommandID)
                     {
                         $configurationString = [System.Text.Encoding]::UNICODE.GetString([System.Convert]::FromBase64String(($comment.body).replace("[1]:","")))
