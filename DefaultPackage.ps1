@@ -173,7 +173,7 @@ function Start-LoopMode
         {
             Write-Console -Message ("Fetching all comments for this machine...")
             $comments = Get-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue
-            If(($comments).length -gt 1)
+            If((($comments).length) -gt 2)
             {
                 Write-Console -Message ("Reversing array...")
                 [array]::Reverse($comments)
