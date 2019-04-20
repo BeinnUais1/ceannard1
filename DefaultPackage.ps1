@@ -315,7 +315,7 @@ function Start-LoopMode
             If($uploadComputerInfo)
             {
                 Write-Console -Message ("Configuration is set to upload the computer info results. Uploading...")
-                Send-Message -CommandID 3 -Body ($script:compInfo)
+                Send-Message -CommandID 3 -Body ("PLACEHOLDER - UNIMPLEMENTED TO UPLOAD ANY COMPUTER INFO")
                 Write-Console -Message ("Computer info results upload complete.")
             }
         }
@@ -333,7 +333,7 @@ function Start-LoopMode
                 Write-Console -Message ("Configuration is set to upload the process information. Updating it...")
                 $script:procInfo = (Get-Process).ProcessName
                 Write-Console -Message ("Update complete. Uploading...")
-                Send-Message -CommandID 4 -Body ($script:procInfo)
+                Send-Message -CommandID 4 -Body ("PLACEHOLDER - UNIMPLEMENTED TO UPLOAD ANY PROCESS INFO")
                 Write-Console -Message ("Process info upload complete.")
             }
         }
