@@ -626,7 +626,7 @@ function Start-LoopMode
 
 #ENTRY POINT
 
-$script:debugMode = $True
+$script:debugMode = $False
 $script:consoleLog = ""
 Write-Console -Message ("Program starting with debug mode set to " + $debugMode + ".")
 
